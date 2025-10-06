@@ -1,6 +1,16 @@
-export const Tabs = ({ tabs, activeTabId, setTab, activeTabInfo }) => {
-  function onTabSelected(id) {
-    setTab(id);
+export const Tabs = ({ tabs, activeTabId, onTabSelected }) => {
+  if (!tabs || tabs.length === 0) {
+    return <div data-cy="TabsComponent" />;
+  }
+
+  const foundTab = tabs.find(tab => tab.id === activeTabId);
+
+  const activeTabInfo = foundTab || tabs[0];
+
+  const currentActiveId = activeTabInfo.id;
+
+  function onActiveTabSelected(id) {
+    onTabSelected(id);
   }
 
   return (
@@ -9,16 +19,17 @@ export const Tabs = ({ tabs, activeTabId, setTab, activeTabInfo }) => {
         <ul>
           {tabs.map(tab => (
             <li
-              className={tab.id === activeTabId ? 'is-active' : ''}
+              className={tab.id === currentActiveId ? 'is-active' : ''}
               data-cy="Tab"
               key={tab.id}
             >
               <a
                 href={`#${tab.id}`}
                 data-cy="TabLink"
-                onClick={() => {
-                  if (tab.id !== activeTabId) {
-                    onTabSelected(tab.id);
+                onClick={e => {
+                  e.preventDefault();
+                  if (tab.id !== currentActiveId) {
+                    onActiveTabSelected(tab.id);
                   }
                 }}
               >
